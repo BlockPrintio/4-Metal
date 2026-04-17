@@ -75,9 +75,6 @@ validator mint(oracle_address: Address, vault_policy_id: PolicyId) {
 
       // -----------------------------------------------------------------------
       BurnSynth -> {
-        // FIX 2: dict is now imported — dict.values() resolves correctly.
-        // FIX 4: policy_id is now in scope (underscore removed from parameter).
-        //
         // Extract all token quantities minted/burned under this policy in this tx.
         // For a burn, every quantity must be strictly negative.
         // We also require at least one token to be present (non-trivial burn).

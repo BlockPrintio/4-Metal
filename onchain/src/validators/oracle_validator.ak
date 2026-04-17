@@ -12,7 +12,7 @@ const max_staleness_ms: Int = 120_000
 /// Controls when the oracle UTXO can be updated.
 /// Only the authorised oracle node (identified by oracle_key) may spend this UTXO.
 ///
-/// Fixes applied vs original:
+/// More Checks:
 ///   1. Validity range extraction uses `Finite(lower)` — the bound_type is an
 ///      IntervalBoundType enum, not an Option. `Some(lower)` compiles but fails at runtime.
 ///   2. The continuing oracle output is located and its new datum is validated:
