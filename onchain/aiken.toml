@@ -1,0 +1,16 @@
+name = "BlockPrintio/4-Metal"
+version = "0.1.0"
+compiler = "v1.1.10"
+plutus = "v3"
+license = "Apache-2.0"
+description = "Cardano-native synthetic gold and silver protocol with Charli3 pull-oracle"
+
+[repository]
+user = "BlockPrintio"
+project = "4-Metal"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "v2.2.0"
+source = "github"
