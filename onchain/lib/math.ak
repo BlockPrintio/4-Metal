@@ -17,13 +17,13 @@ pub fn xag_per_lovelace(xag_usd: Int, ada_usd: Int) -> Int {
 /// Collateral ratio as a whole-number percentage (e.g. 150 = 150%).
 /// collateral and synth_amount are in lovelace; unit_price is scaled by precision.
 pub fn collateral_ratio(collateral: Int, synth_amount: Int, unit_price: Int) -> Int {
-  collateral * 100 * precision / (synth_amount * unit_price)
+  collateral * 100 / (synth_amount * unit_price / precision)
 }
 
 /// Maximum synth units mintable given collateral, unit price, and required ratio (e.g. 150).
 /// Inverse of collateral_ratio — staying within max_mintable guarantees ratio >= required.
 pub fn max_mintable(collateral: Int, unit_price: Int, ratio: Int) -> Int {
-  collateral * 100 * precision / (unit_price * ratio)
+  collateral * 100 / (unit_price * ratio / precision)
 }
 
 // ---------------------------------------------------------------------------
@@ -31,17 +31,17 @@ pub fn max_mintable(collateral: Int, unit_price: Int, ratio: Int) -> Int {
 // ---------------------------------------------------------------------------
 
 test collateral_ratio_works() {
-  // 150 ADA collateral, 1 synth at 100 ADA each → ratio = 150%
-  collateral_ratio(150 * precision, 1, 100 * precision) == 150
+  // 150 ADA collateral (unscaled), 1 synth (unscaled) at 100 ADA each (scaled) → ratio = 150%
+  collateral_ratio(150, 1, 100 * precision) == 150
 }
 
 test max_mintable_works() {
   // 150 ADA collateral at 100 ADA/synth with 150% ratio → max 1 synth
-  max_mintable(150 * precision, 100 * precision, 150) == 1
+  max_mintable(150, 100 * precision, 150) == 1
 }
 
 test ratio_and_mintable_are_inverse() {
-  let collateral = 300 * precision
+  let collateral = 300
   let price      = 100 * precision
   let ratio      = 150
   let max        = max_mintable(collateral, price, ratio)
