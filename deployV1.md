@@ -28,13 +28,19 @@ Open two terminals and start your price-signing nodes:
 **Gold Node (Port 8000):**
 ```bash
 cd charli3-pull-oracle-node
+# Either using poetry:
 poetry run python node/main.py run -c configs/config-gold.yml --port 8000
+# Or direct venv:
+./.venv/bin/python node/main.py run -c configs/config-gold.yml --port 8000
 ```
 
 **Silver Node (Port 8001):**
 ```bash
 cd charli3-pull-oracle-node
+# Either using poetry:
 poetry run python node/main.py run -c configs/config-silver.yml --port 8001
+# Or direct venv:
+./.venv/bin/python node/main.py run -c configs/config-silver.yml --port 8001
 ```
 
 ### Step 2: Verify Health
