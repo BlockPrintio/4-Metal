@@ -3,7 +3,7 @@
 **Trade the world's major metal assets — on-chain, open, and non-custodial.**
 
 ### Quick Links
-- [Jump to Deployment & Testing](#how-to-run-and-test
+- [Jump to Deployment & Testing](#how-to-run-and-test)
 - [Oracle Proof of Truth](#oracle-proof-of-truth)
 
 4-Metal Trader is a decentralised synthetic asset protocol built on Cardano that brings real-world precious metal markets to the blockchain. Users can take exposure to gold, silver, platinum, and palladium prices by minting synthetic tokens backed by ADA collateral — no broker, no KYC, no custody risk.
