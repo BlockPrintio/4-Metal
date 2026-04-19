@@ -175,12 +175,23 @@ Please follow every steps to get the oracle nodes running in minutes, follow the
    Check the terminal output to monitor price aggregation and transaction submission status.
 
 then also clone this our forked sdk version https://github.com/Temasar1/charli3-pull-oracle-sdk
-run # Gold
+run 
+# Gold
+```
 poetry run charli3 client send --config pull_gold.yaml
+```
 
 # Silver
+```
 poetry run charli3 client send --config pull_silver.yaml
+```
 
+For an interval of 8 minutes automation and price aggregation run 
+
+```
+  ./scripts/auto_pull.sh
+
+``
 
 
 ---
