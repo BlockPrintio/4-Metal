@@ -7,8 +7,8 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "."
   },
-  "include": ["app/**/*.ts"]
+  "include": ["src/**/*", "tests/**/*"]
 }

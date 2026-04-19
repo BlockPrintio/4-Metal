@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { ArrowDown, Settings2 } from "lucide-react";
 import { TokenSelect, type TokenSymbol } from "./TokenSelect";
 import { cn } from "@/lib/utils";
+import { useOraclePrices } from "@/hooks/useOraclePrices";
 
 interface PanelProps {
   label: string;
@@ -65,11 +65,59 @@ export function SwapBox() {
   const [fromToken, setFromToken] = useState<TokenSymbol>("ADA");
   const [toToken, setToToken] = useState<TokenSymbol>("aXAU");
 
+  const { data: prices, isLoading: isPricesLoading } = useOraclePrices();
+
+  useEffect(() => {
+    if (!prices || !fromAmount) {
+      setToAmount("");
+      return;
+    }
+
+    const amount = parseFloat(fromAmount);
+    if (isNaN(amount) || amount <= 0) {
+      setToAmount("");
+      return;
+    }
+
+    const adaPrice = prices.ada;
+    const xauPrice = prices.xau;
+    const xagPrice = prices.xag;
+
+    const getPrice = (t: TokenSymbol) => {
+      if (t === "ADA") return adaPrice;
+      if (t === "aXAU") return xauPrice;
+      if (t === "aXAG") return xagPrice;
+      return 0;
+    };
+
+    const fromPrice = getPrice(fromToken);
+    const toPrice = getPrice(toToken);
+
+    if (!fromPrice || !toPrice) return;
+
+    let calculated = 0;
+    if (fromToken === "ADA") {
+      // 150% collateral calculation: Minting
+      calculated = (amount * fromPrice) / (toPrice * 1.5);
+    } else if (toToken === "ADA") {
+      // 150% collateral calculation: Redeeming
+      calculated = (amount * fromPrice * 1.5) / toPrice;
+    } else {
+      // Metal to Metal
+      calculated = (amount * fromPrice) / toPrice;
+    }
+
+    setToAmount(calculated.toLocaleString("en-US", { 
+      maximumFractionDigits: 6,
+      useGrouping: false 
+    }));
+  }, [fromAmount, fromToken, toToken, prices]);
+
   const flip = () => {
     setFromToken(toToken);
     setToToken(fromToken);
     setFromAmount(toAmount);
-    setToAmount(fromAmount);
+    // Let the effect handle the calculation back
   };
 
   const setFrom = (t: TokenSymbol) => {
@@ -82,6 +130,20 @@ export function SwapBox() {
   };
 
   const hasAmount = parseFloat(fromAmount || "0") > 0;
+  
+  // Rate for display: 1 fromToken = ? toToken
+  let displayRate = "0";
+  if (prices) {
+    const fromPrice = (fromToken === "ADA" ? prices.ada : (fromToken === "aXAU" ? prices.xau : prices.xag));
+    const toPrice = (toToken === "ADA" ? prices.ada : (toToken === "aXAU" ? prices.xau : prices.xag));
+    if (fromToken === "ADA") {
+       displayRate = ((1 * fromPrice) / (toPrice * 1.5)).toFixed(6);
+    } else if (toToken === "ADA") {
+       displayRate = ((1 * fromPrice * 1.5) / toPrice).toFixed(2);
+    } else {
+       displayRate = (fromPrice / toPrice).toFixed(6);
+    }
+  }
 
   return (
     <div className="w-full max-w-[440px] rounded-3xl border border-border bg-card/80 backdrop-blur-xl shadow-2xl p-5">
@@ -131,7 +193,7 @@ export function SwapBox() {
       <div className="mt-4 rounded-xl bg-secondary/40 border border-border/40 px-4 py-3 text-xs text-muted-foreground flex items-center justify-between">
         <span className="flex items-center gap-1">
           1 {fromToken.startsWith('a') ? <><span className="text-gold lowercase">a</span>{fromToken.slice(1)}</> : fromToken} 
-          = 0 {toToken.startsWith('a') ? <><span className="text-gold lowercase">a</span>{toToken.slice(1)}</> : toToken}
+          = {displayRate} {toToken.startsWith('a') ? <><span className="text-gold lowercase">a</span>{toToken.slice(1)}</> : toToken}
         </span>
         <span>Slippage 0.5%</span>
       </div>

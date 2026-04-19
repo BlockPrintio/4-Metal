@@ -1,0 +1,30 @@
+{
+  "name": "4-metal-offchain",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "patch:libsodium": "node ./scripts/patch-libsodium-esm.mjs",
+    "postinstall": "node ./scripts/patch-libsodium-esm.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "npm run patch:libsodium && tsc",
+    "deploy": "npm run patch:libsodium && tsx src/deploy.ts",
+    "deploy:info": "tsx src/deploy.ts --info",
+    "tx:try": "npm run patch:libsodium && tsx src/runTransactions.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@meshsdk/core": "1.8.14",
+    "cbor": "^10.0.12",
+    "dotenv": "^16.0.0",
+    "libsodium-sumo": "^0.7.16"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
