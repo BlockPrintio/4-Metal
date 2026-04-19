@@ -3,9 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [CardanoWallet, setCardanoWallet] = useState<any>(null);
+
+  useEffect(() => {
+    const loadWallet = async () => {
+      try {
+        const { CardanoWallet: Wallet } = await import("@meshsdk/react");
+        setCardanoWallet(() => Wallet);
+      } catch (err) {
+        console.error("Failed to load CardanoWallet:", err);
+      }
+    };
+    loadWallet();
+  }, []);
 
   return (
     <header className="flex items-center justify-between px-6 py-5">
@@ -45,14 +59,27 @@ export function SiteHeader() {
         >
           Oracle
         </Link>
+        <Link
+          href="/liquidate"
+          className={cn(
+            "px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors",
+            pathname === "/liquidate" && "bg-accent text-foreground"
+          )}
+        >
+          Liquidate
+        </Link>
       </nav>
 
-      <button
-        type="button"
-        className="rounded-full border border-border bg-card/60 hover:bg-accent transition-colors px-4 py-2 text-xs font-medium"
-      >
-        Connect Wallet
-      </button>
+      {CardanoWallet ? (
+        <CardanoWallet label="Connect Wallet" isDark={true} />
+      ) : (
+        <button
+          type="button"
+          className="rounded-full border border-border bg-card/60 hover:bg-accent transition-colors px-4 py-2 text-xs font-medium opacity-50"
+        >
+          Connect Wallet
+        </button>
+      )}
     </header>
   );
 }

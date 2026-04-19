@@ -191,7 +191,7 @@ For an interval of 8 minutes automation and price aggregation run
 ```
   ./scripts/auto_pull.sh
 
-``
+```
 
 
 ---

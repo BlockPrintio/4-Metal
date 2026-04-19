@@ -1,18 +1,19 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Clock } from "lucide-react";
+import { TrendingUp, Clock } from "lucide-react";
+import { useOraclePrices } from "@/hooks/useOraclePrices";
 
 interface MetalCardProps {
-  name: string;
-  symbol: string;
-  price: string;
-  change: string;
-  isUp: boolean;
-  colorClass: string;
+  name:         string;
+  symbol:       string;
+  price:        string;
+  colorClass:   string;
   gradientClass: string;
   isComingSoon?: boolean;
 }
 
-function MetalCard({ name, symbol, price, change, isUp, colorClass, gradientClass, isComingSoon }: MetalCardProps) {
+function MetalCard({ name, symbol, price, colorClass, gradientClass, isComingSoon }: MetalCardProps) {
   return (
     <div className={cn(
       "group relative rounded-3xl border border-border bg-card/40 backdrop-blur-xl p-8 transition-all hover:border-gold/30 hover:bg-card/60",
@@ -30,7 +31,7 @@ function MetalCard({ name, symbol, price, change, isUp, colorClass, gradientClas
           </span>
         </div>
       )}
-      
+
       <div className="flex flex-col h-full">
         <div className="flex items-center gap-4 mb-6">
           <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center font-bold text-lg border border-white/10", gradientClass)}>
@@ -45,13 +46,13 @@ function MetalCard({ name, symbol, price, change, isUp, colorClass, gradientClas
         </div>
 
         <div className="mt-auto">
-          <div className="text-3xl font-bold tracking-tight mb-2">{isComingSoon ? "—" : price}</div>
+          <div className="text-3xl font-bold tracking-tight mb-2">
+            {isComingSoon ? "—" : price}
+          </div>
           {!isComingSoon && (
-            <div className={cn("inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full", 
-              isUp ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
-            )}>
-              {isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-              {change}
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
+              <TrendingUp className="h-3 w-3" />
+              Live · Charli3
             </div>
           )}
           {isComingSoon && (
@@ -65,45 +66,46 @@ function MetalCard({ name, symbol, price, change, isUp, colorClass, gradientClas
   );
 }
 
+function fmt(val: number, decimals = 2) {
+  return `$${val.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  })}`;
+}
+
 export function MetalGrid() {
+  const { data } = useOraclePrices();
+
   const metals: MetalCardProps[] = [
     {
-      name: "Gold",
-      symbol: "aXAU",
-      price: "$2,742.50",
-      change: "+1.2%",
-      isUp: true,
-      colorClass: "bg-gold",
+      name:          "Gold",
+      symbol:        "aXAU",
+      price:         data ? fmt(data.xau) : "···",
+      colorClass:    "bg-gold",
       gradientClass: "bg-gradient-to-br from-gold/50 to-gold text-gold-foreground",
     },
     {
-      name: "Silver",
-      symbol: "aXAG",
-      price: "$34.12",
-      change: "-0.4%",
-      isUp: false,
-      colorClass: "bg-silver",
+      name:          "Silver",
+      symbol:        "aXAG",
+      price:         data ? fmt(data.xag) : "···",
+      colorClass:    "bg-silver",
       gradientClass: "bg-gradient-to-br from-white/10 to-silver text-foreground",
     },
     {
-      name: "Platinum",
-      symbol: "aXPT",
-      price: "$1,025.10",
-      change: "+0.8%",
-      isUp: true,
-      colorClass: "bg-slate-300",
+      name:          "Platinum",
+      symbol:        "aXPT",
+      price:         "—",
+      colorClass:    "bg-slate-300",
       gradientClass: "bg-gradient-to-br from-slate-400 to-slate-200 text-slate-900",
-      isComingSoon: true,
+      isComingSoon:  true,
     },
     {
-      name: "Palladium",
-      symbol: "aXPD",
-      price: "$1,120.45",
-      change: "+2.1%",
-      isUp: true,
-      colorClass: "bg-orange-300",
+      name:          "Palladium",
+      symbol:        "aXPD",
+      price:         "—",
+      colorClass:    "bg-orange-300",
       gradientClass: "bg-gradient-to-br from-orange-400 to-orange-200 text-orange-950",
-      isComingSoon: true,
+      isComingSoon:  true,
     },
   ];
 
@@ -113,15 +115,15 @@ export function MetalGrid() {
         <div className="max-w-xl">
           <h2 className="text-3xl font-bold tracking-tight mb-4">Supported Market Assets</h2>
           <p className="text-muted-foreground">
-            Synthetic commodites maintain 1:1 price parity with physical reserves through 
-            over-collateralized ADA vaults and real-time oracle aggregation.
+            Synthetic commodities maintain 1:1 price parity with physical reserves through
+            over-collateralised ADA vaults and real-time Charli3 oracle aggregation.
           </p>
         </div>
         <div className="text-xs font-mono text-muted-foreground bg-secondary/60 px-4 py-2 rounded-xl border border-border">
           REF: CHARLI3_AGGR_PROTO_V1
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metals.map((metal) => (
           <MetalCard key={metal.symbol} {...metal} />
